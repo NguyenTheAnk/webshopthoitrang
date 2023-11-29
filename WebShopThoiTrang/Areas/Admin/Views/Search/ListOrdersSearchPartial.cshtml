@@ -1,0 +1,23 @@
+﻿@model List<WebShopThoiTrang.Models.EF.Order>
+
+@if (Model != null && Model.Any())
+{
+    var i = ((ViewBag.Page - 1) * ViewBag.PageSize) + 1;
+    foreach (var item in Model)
+    {
+        <tr>
+            <td>@i</td>
+            <td>@item.Code</td>
+            <td>@item.CustomerName</td>
+            <td>@item.Phone</td>
+            <td>@WebShopThoiTrang.Common.Common.FormatNumber(item.TotalAmount, 0)</td>
+            <td>@(item.TypePayment==1?"Chờ thành toán":"Đã thanh toán")</td>
+            <td>@item.CreatedDate.ToString("dd/MM/yyyy")</td>
+            <td>
+                <a href="/admin/order/view/@item.Id" class="btn btn-primary btn-tone mr-1 fa fa-folder-open"> Xem</a>
+                <a href="#" class="btn btn-secondary btn-tone mr-1 fa fa-edit btnCapNhat" data-id="@item.Id"> Cập nhật</a>
+            </td>
+        </tr>
+        i++;
+    }
+}

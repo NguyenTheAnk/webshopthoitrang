@@ -1,0 +1,37 @@
+﻿
+@model IEnumerable<WebShopThoiTrang.Models.EF.OrderDetail>
+@using WebShopThoiTrang.Common
+
+@if (Model != null && Model.Any())
+{
+    int i = 1;
+    var tongtien = decimal.Zero;
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Tên sản phẩm</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                tongtien += @item.Price * item.Quantity;
+                <tr>
+                    <td>@i</td>
+                    <td>@item.Product.Title</td>
+                    <td>@WebShopThoiTrang.Common.Common.FormatNumber(item.Price, 0)</td>
+                    <td>@item.Quantity</td>
+                    <td>@WebShopThoiTrang.Common.Common.FormatNumber((item.Price * item.Quantity), 0)</td>
+                </tr>
+                i++;
+            }          
+        </tbody>
+        
+    </table>
+   
+}

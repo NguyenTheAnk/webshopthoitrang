@@ -1,0 +1,159 @@
+﻿@model PagedList.PagedList<WebShopThoiTrang.Models.EF.Category>
+@using PagedList.Mvc;
+@using PagedList;
+@{
+    ViewBag.Title = "Danh sách danh mục";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section naviheader{
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/home" class="nav-link">Trang chủ</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+            <a href="/admin/category" class="nav-link">Danh mục</a>
+        </li>
+    </ul>
+}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-10">
+                <h1>Quản lý danh mục</h1>
+            </div>
+            <div class="page-header col-sm-2">
+                <div class="header-sub-title">
+                    <nav class="breadcrumb breadcrumb-dash">
+                        <a href="#" class="breadcrumb-item">
+                            <i class="anticon anticon-home mr-1 fas fa-home"> Home</i>
+                        </a>
+                        <span class="breadcrumb-item active"><i class="fa fa-calendar"> Danh sách danh mục</i></span>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">@ViewBag.Title</h3>
+            <div class="row">               
+
+            </div>
+            <div class="card-tools">
+                <a class="btn btn-primary" href="/admin/category/add"> <i class="anticon anticon-plus-circle m-r-5 fas fa-plus"><span> Thêm danh mục</span></i></a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-3">
+                    @using (Html.BeginForm("Index", "Category", FormMethod.Get, new { }))
+                    {
+                        <div class="input-group input-group-sm">
+                            @Html.TextBox("Searchtext", null, new { @class = "form-control" })
+                            @*<input type="text" name="searchtext" class="form-control">*@
+                            <div class="input-group-append">
+                                <button type="submit" class="btn-default">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên danh mục</th>
+                        <th>Thứ tự</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="records_table">
+                    @if (Model != null && Model.Any())
+                    {
+                        var i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr id="trow_@item.Id">
+                                <td>@i</td>
+                                <td>@item.Title</td>
+                                <td> @item.Position</td>
+                                <td>
+                                    <a href="/admin/category/edit/@item.Id" class="btn btn-secondary btn-tone mr-1 fa fa-edit"> Sửa</a>
+                                    <a href="#" data-id="@item.Id" class="btn btn-danger btn-tone mr-1 fa fa-trash-alt btnDelete"> Xóa</a>
+
+                                </td>
+                            </tr>
+                            i++;
+                        }
+
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4">Không có bản ghi nào!!</td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-6">
+                    @if (Model.Count() > 0)
+                    {
+                        <p class="m-4">Đang xem danh mục từ @Model.FirstItemOnPage đến @Model.LastItemOnPage trong tổng số @Model.TotalItemCount danh mục</p>
+                    }
+                </div>
+                <div class="col-12" style="text-align:center;">
+                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, Searchtext = ViewBag.Searchtext }), PagedListRenderOptions.ClassicPlusFirstAndLast)
+                </div>
+            </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+
+        </div>
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+</section>
+<!-- /.content -->
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', '.btnDelete', function () {
+                var id = $(this).data("id");
+                var conf = confirm('Bạn có muốn xóa bản ghi này không?');
+                if (conf === true) {
+                    $.ajax({
+                        url: '/admin/category/delete',
+                        type: 'POST',
+                        data: { id: id },
+                        success: function (rs) {
+                            if (rs.success) {
+                                $('#trow_' + id).remove();
+                            } else {
+                                alert('Xóa không thành công!!');
+                            }
+                        }
+                    })
+                }
+            });
+           
+        })
+    </script>
+}
